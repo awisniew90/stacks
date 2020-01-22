@@ -13,13 +13,9 @@ if [ ! -f ./pom.xml ]; then
 fi
 
 # Get parent pom information (../pom.xml)
-args='export PARENT_GROUP_ID=${project.groupId}; export PARENT_ARTIFACT_ID=${project.artifactId}; export PARENT_VERSION=${project.version}
-export LIBERTY_GROUP_ID=${liberty.groupId}; export LIBERTY_ARTIFACT_ID=${liberty.artifactId}; export LIBERTY_VERSION=${version.openliberty-runtime}'
-eval $(mvn -q -Dexec.executable=echo -Dmaven.repo.local=/mvn/repository -Dexec.args="${args}" --non-recursive -f ../pom.xml exec:exec 2>/dev/null)
-
-# Install parent pom
-echo "Installing parent ${PARENT_GROUP_ID}:${PARENT_ARTIFACT_ID}:${PARENT_VERSION}"
-mvn install -Dmaven.repo.local=/mvn/repository -Denforcer.skip=true -f ../pom.xml
+#args='export PARENT_GROUP_ID=${project.groupId}; export PARENT_ARTIFACT_ID=${project.artifactId}; export PARENT_VERSION=${project.version}
+#export LIBERTY_GROUP_ID=${liberty.groupId}; export LIBERTY_ARTIFACT_ID=${liberty.artifactId}; export LIBERTY_VERSION=${version.openliberty-runtime}'
+#eval $(mvn -q -Dexec.executable=echo -Dmaven.repo.local=/mvn/repository -Dexec.args="${args}" --non-recursive -f ../pom.xml exec:exec 2>/dev/null)
 
 # Get parent pom information
 a_groupId=$(xmlstarlet sel -T -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:groupId" /project/pom.xml)
@@ -28,6 +24,10 @@ a_version=$(xmlstarlet sel -T -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x
 p_groupId=$(xmlstarlet sel -T -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:parent/x:groupId" pom.xml)
 p_artifactId=$(xmlstarlet sel -T -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:parent/x:artifactId" pom.xml)
 p_version_range=$(xmlstarlet sel -T -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:parent/x:version" pom.xml)
+
+# Install parent pom
+echo "Installing parent ${a_groupId}:${a_artifactId}:${a_version}"
+mvn install -Dmaven.repo.local=/mvn/repository -Denforcer.skip=true -f ../pom.xml
 
 # Check child pom for required parent project
 if [ "${p_groupId}" != "${a_groupId}" ] || [ "${p_artifactId}" != "${a_artifactId}" ]; then
