@@ -43,9 +43,7 @@ COPY --chown=java_user:java_group ./user-app /project/user-app
 
 # Build (and run unit tests) 
 #  also liberty:create copies config from src->target
-#  also remove quick-start-security.xml since it's convenient for local dev mode but should not be in the production image.
 RUN cd /project/user-app && \
-    rm -f src/main/liberty/config/configDropins/defaults/quick-start-security.xml && \
     mvn -Pappsody-build -B liberty:create package
 
 # process any resources or shared libraries - if they are present in the dependencies block for this project (there may be none potentially)
